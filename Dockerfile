@@ -16,8 +16,11 @@ RUN apt-get update &&\
   --with-zlib --enable-sockets --enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex --enable-exif --enable-bcmath --with-mhash \
   --enable-zip --with-pcre-regex --with-pdo-mysql --with-mysqli --with-mysql-sock=/var/run/mysqld/mysqld.sock --with-jpeg-dir=/usr --with-png-dir=/usr \
   --enable-gd-native-ttf --with-fpm-user=www-data --with-fpm-group=www-data --with-libdir=/lib/x86_64-linux-gnu --enable-ftp --with-kerberos --with-gettext \
-  --with-xmlrpc --with-xsl --enable-opcache --enable-fpm 
+  --with-xmlrpc --with-xsl --enable-opcache --enable-fpm && \
+  make && \
+  make install
 
+# Compiling NGINX
 RUN  wget http://nginx.org/download/nginx-${NGINX_VER}.tar.gz -O /tmp/nginx-${NGINX_VER}.tar.gz &&\
   cd /tmp &&\
   tar xvf /tmp/nginx-${NGINX_VER}.tar.gz &&\
