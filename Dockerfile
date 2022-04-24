@@ -7,16 +7,16 @@ ENV NGINX_VER 1.16.1
 # php5-curl php5-gd php5-fpm php5-imagick php5-mcrypt php5-memcache php5-memcached php5-mysql
 
 COPY sources.list /etc/apt/sources.list
-RUN apt-get update && apt-get install dpkg-dev devscripts
+RUN apt-get update && apt-get -y install dpkg-dev devscripts
 
 # Modify the configure flags for php-gd
-RUN cd /tmp && apt-get source php5 && apt-get build-dep php5 && \
+RUN cd /tmp && apt-get -y source php5 && apt-get -y build-dep php5 && \
   cd php-json-1.3.6 && \
   # Start the build process
   RUN debuild -b -uc -us 
 
 # Modify the configure flags for php-gd
-RUN cd /tmp && apt-get source php-json && apt-get build-dep php-json && \
+RUN cd /tmp && apt-get -y source php-json && apt-get -y build-dep php-json && \
   cd php5-5.6.33+dfsg && \
   sed -i 's/--with-gd=shared,\/usr/--with-gd=shared/g' debian/rules
 # Start the build process
