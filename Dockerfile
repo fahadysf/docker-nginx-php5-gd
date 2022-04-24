@@ -6,19 +6,15 @@ ENV NGINX_VER 1.16.1
 
 # php5-curl php5-gd php5-fpm php5-imagick php5-mcrypt php5-memcache php5-memcached php5-mysql
 
-RUN apt-get update &&\
-  apt-get install -y build-essential dnsutils imagemagick libpcre3 libpcre3-dev libpcrecpp0 libssl-dev ssmtp supervisor zlib1g-dev wget whois && \
-  apt-get install -y wget bzip2 gcc libxml2-dev libz-dev libbz2-dev libcurl4-openssl-dev libmcrypt-dev libpq-dev libxslt-dev memcached libmemcached-tools && \
-  wget http://de2.php.net/get/php-5.6.33.tar.bz2/from/this/mirror -O php-5.6.33.tar.bz2 && \
-  tar jxf ./php-5.6.33.tar.bz2 && \
-  cd php-5.6.33 && ./configure --prefix=/usr/php-5.6 --with-pdo-pgsql --with-zlib-dir --with-freetype-dir --enable-mbstring --with-libxml-dir=/usr \
-  --enable-soap --enable-calendar --with-curl --with-mcrypt --with-zlib --with-pgsql --disable-rpath --enable-inline-optimization --with-bz2 \
-  --with-zlib --enable-sockets --enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex --enable-exif --enable-bcmath --with-mhash \
-  --enable-zip --with-pcre-regex --with-pdo-mysql --with-mysqli --with-mysql-sock=/var/run/mysqld/mysqld.sock --with-jpeg-dir=/usr --with-png-dir=/usr \
-  --enable-gd-native-ttf --with-fpm-user=www-data --with-fpm-group=www-data --with-libdir=/lib/x86_64-linux-gnu --enable-ftp --with-kerberos --with-gettext \
-  --with-xmlrpc --with-xsl --enable-opcache --enable-fpm && \
-  make && \
-  make install
+COPY sources.list /etc/apt/sources.list
+RUN apt-get update && apt-get install dpkg-dev devscripts
+
+# Modify the configure flags for php-gd
+RUN cd /tmp && apt-get source php5 && apt-get build-dep php5 && \
+  cd php5-5.6.33+dfsg && \
+  sed -i 's/--with-gd=shared,\/usr/--with-gd=shared/g' debian/rules
+# Start the build process
+RUN debuild -b -uc -us 
 
 # Compiling NGINX
 RUN  wget http://nginx.org/download/nginx-${NGINX_VER}.tar.gz -O /tmp/nginx-${NGINX_VER}.tar.gz &&\
