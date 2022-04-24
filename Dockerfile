@@ -9,18 +9,18 @@ ENV NGINX_VER 1.16.1
 COPY sources.list /etc/apt/sources.list
 RUN apt-get update && apt-get -y install dpkg-dev devscripts
 
-# Modify the configure flags for php-gd
+# Modify the configure flags for php-gd and start the build process.
 RUN cd /tmp && apt-get -y source php5 && DEBIAN_FRONTEND=noninteractive apt-get -y build-dep php5 && \
   cd php5-5.6.33+dfsg && \
-  sed -i 's/--with-gd=shared,\/usr/--with-gd=shared/g' debian/rules 
-# Start the build process
-RUN debuild -b -uc -us 
+  sed -i 's/--with-gd=shared,\/usr/--with-gd=shared/g' debian/rules && \
+  debuild -b -uc -us 
 
-# Modify the configure flags for php-gd
+# Build php-json
 RUN cd /tmp && apt-get -y source php-json && apt-get -y build-dep php-json && \
-  cd php-json-1.3.6 
-# Start the build process
-RUN debuild -b -uc -us 
+  cd php-json-1.3.6  && \
+  debuild -b -uc -us 
+
+
 
 # Install the packages
 RUN cd /tmp && dpkg -i php5-common*.deb \
