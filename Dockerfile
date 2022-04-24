@@ -11,10 +11,28 @@ RUN apt-get update && apt-get install dpkg-dev devscripts
 
 # Modify the configure flags for php-gd
 RUN cd /tmp && apt-get source php5 && apt-get build-dep php5 && \
+  cd php-json-1.3.6 && \
+  # Start the build process
+  RUN debuild -b -uc -us 
+
+# Modify the configure flags for php-gd
+RUN cd /tmp && apt-get source php-json && apt-get build-dep php-json && \
   cd php5-5.6.33+dfsg && \
   sed -i 's/--with-gd=shared,\/usr/--with-gd=shared/g' debian/rules
 # Start the build process
 RUN debuild -b -uc -us 
+
+# Install the packages
+RUN cd /tmp && dpkg -i php5-common*.deb \
+  php5-json*.deb \
+  php5-cli*.deb \
+  php5-fpm*.deb \
+  php5-mcrypt*.deb \
+  php5-mysqlnd*.deb \
+  php5-mysql*.deb \
+  php5-gd*.deb
+
+RUN apt-get -y install php5-imagick php5-memcache php5-memcached
 
 # Compiling NGINX
 RUN  wget http://nginx.org/download/nginx-${NGINX_VER}.tar.gz -O /tmp/nginx-${NGINX_VER}.tar.gz &&\
