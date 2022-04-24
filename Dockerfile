@@ -10,7 +10,7 @@ COPY sources.list /etc/apt/sources.list
 RUN apt-get update && apt-get -y install dpkg-dev devscripts
 
 # Modify the configure flags for php-gd
-RUN cd /tmp && apt-get -y source php5 && apt-get -y build-dep php5 && \
+RUN cd /tmp && apt-get -y source php5 && DEBIAN_FRONTEND=noninteractive apt-get -y build-dep php5 && \
   cd php-json-1.3.6 && \
   # Start the build process
   RUN debuild -b -uc -us 
