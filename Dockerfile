@@ -11,14 +11,14 @@ RUN apt-get update && apt-get -y install dpkg-dev devscripts
 
 # Modify the configure flags for php-gd
 RUN cd /tmp && apt-get -y source php5 && DEBIAN_FRONTEND=noninteractive apt-get -y build-dep php5 && \
-  cd php-json-1.3.6 && \
-  # Start the build process
-  RUN debuild -b -uc -us 
+  cd php5-5.6.33+dfsg && \
+  sed -i 's/--with-gd=shared,\/usr/--with-gd=shared/g' debian/rules 
+# Start the build process
+RUN debuild -b -uc -us 
 
 # Modify the configure flags for php-gd
 RUN cd /tmp && apt-get -y source php-json && apt-get -y build-dep php-json && \
-  cd php5-5.6.33+dfsg && \
-  sed -i 's/--with-gd=shared,\/usr/--with-gd=shared/g' debian/rules
+  cd php-json-1.3.6 
 # Start the build process
 RUN debuild -b -uc -us 
 
