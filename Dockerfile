@@ -16,21 +16,20 @@ RUN cd /tmp && apt-get -y source php5 && DEBIAN_FRONTEND=noninteractive apt-get 
   debuild -b -uc -us 
 
 # Build php-json
-RUN cd /tmp && apt-get -y source php-json && apt-get -y build-dep php-json && \
+RUN cd /tmp && apt-get -y source php-json && \apt-get -y build-dep php-json && \
   cd php-json-1.3.6  && \
   debuild -b -uc -us 
 
-
-
 # Install the packages
-RUN cd /tmp && dpkg -i php5-common*.deb \
-  php5-json*.deb \
-  php5-cli*.deb \
+RUN cd /tmp && DEBIAN_FRONTEND=noninteractive \
+  dpkg -i php5-common*.deb \
+  php5-json*.deb
+
+RUN cd /tmp && DEBIAN_FRONTEND=noninteractive dpkg -i php5-cli*.deb \
   php5-fpm*.deb \
-  php5-mcrypt*.deb \
-  php5-mysqlnd*.deb \
-  php5-mysql*.deb \
-  php5-gd*.deb
+  php5-mcrypt*.deb 
+
+RUN cd /tmp && DEBIAN_FRONTEND=noninteractive dpkg -i php5-mysql_*.deb php5-gd*.deb
 
 RUN apt-get -y install php5-imagick php5-memcache php5-memcached
 
@@ -56,10 +55,10 @@ COPY php.conf /etc/nginx/php.conf
 COPY default /etc/nginx/sites-available/default
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-#RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default &&\
-#  sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php5/fpm/php-fpm.conf &&\
-#  sed -i 's/post_max_size = 8M/post_max_size = 16M/g' /etc/php5/fpm/php.ini &&\
-#  sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 16M/g' /etc/php5/fpm/php.ini
+RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default &&\
+  sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php5/fpm/php-fpm.conf &&\
+  sed -i 's/post_max_size = 8M/post_max_size = 16M/g' /etc/php5/fpm/php.ini &&\
+  sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 16M/g' /etc/php5/fpm/php.ini
 
 EXPOSE 80
 CMD ["/usr/bin/supervisord","-c","/etc/supervisor/supervisord.conf"]
