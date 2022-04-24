@@ -11,7 +11,7 @@ RUN apt-get update &&\
   apt-get install -y wget bzip2 gcc libxml2-dev libz-dev libbz2-dev libcurl4-openssl-dev libmcrypt-dev libpq-dev libxslt-dev memcached libmemcached-tools && \
   wget http://de2.php.net/get/php-5.6.33.tar.bz2/from/this/mirror -O php-5.6.33.tar.bz2 && \
   tar jxf ./php-5.6.33.tar.bz2 && \
-  cd php-5.6.33 && ./configure --prefix=/opt/php-5.6 --with-pdo-pgsql --with-zlib-dir --with-freetype-dir --enable-mbstring --with-libxml-dir=/usr \
+  cd php-5.6.33 && ./configure --prefix=/usr/php-5.6 --with-pdo-pgsql --with-zlib-dir --with-freetype-dir --enable-mbstring --with-libxml-dir=/usr \
   --enable-soap --enable-calendar --with-curl --with-mcrypt --with-zlib --with-pgsql --disable-rpath --enable-inline-optimization --with-bz2 \
   --with-zlib --enable-sockets --enable-sysvsem --enable-sysvshm --enable-pcntl --enable-mbregex --enable-exif --enable-bcmath --with-mhash \
   --enable-zip --with-pcre-regex --with-pdo-mysql --with-mysqli --with-mysql-sock=/var/run/mysqld/mysqld.sock --with-jpeg-dir=/usr --with-png-dir=/usr \
@@ -42,10 +42,10 @@ COPY php.conf /etc/nginx/php.conf
 COPY default /etc/nginx/sites-available/default
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default &&\
-  sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php5/fpm/php-fpm.conf &&\
-  sed -i 's/post_max_size = 8M/post_max_size = 16M/g' /etc/php5/fpm/php.ini &&\
-  sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 16M/g' /etc/php5/fpm/php.ini
+#RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default &&\
+#  sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php5/fpm/php-fpm.conf &&\
+#  sed -i 's/post_max_size = 8M/post_max_size = 16M/g' /etc/php5/fpm/php.ini &&\
+#  sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 16M/g' /etc/php5/fpm/php.ini
 
 EXPOSE 80
 CMD ["/usr/bin/supervisord","-c","/etc/supervisor/supervisord.conf"]
